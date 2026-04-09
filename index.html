@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>L'Oréal Beauty Advisor</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+  <div class="page-wrapper">
+
+    <!-- HEADER -->
+    <header class="site-header">
+      <div class="header-inner">
+        <img src="img/loreal-logo.png" class="logo-img" />
+        <span class="tagline">Because You're Worth It</span>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <h1>Your Personal <em>Beauty Advisor</em></h1>
+      <p>Ask anything about skincare, makeup, or haircare</p>
+    </section>
+
+    <!-- CHAT -->
+    <div class="chatbox">
+
+      <div id="questionDisplay" class="question-display hidden">
+        <strong>You asked:</strong> <span id="questionText"></span>
+      </div>
+
+      <div id="chatWindow" class="chat-window"></div>
+
+      <div class="input-row">
+        <input id="userInput" placeholder="Ask something..." />
+        <button onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <!-- SUGGESTIONS -->
+    <div class="chips">
+      <button onclick="askSuggestion(this)">Best moisturizer?</button>
+      <button onclick="askSuggestion(this)">Red lipstick</button>
+      <button onclick="askSuggestion(this)">Skincare routine</button>
+      <button onclick="askSuggestion(this)">Damaged hair tips</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
