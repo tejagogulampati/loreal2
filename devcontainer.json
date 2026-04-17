@@ -2,8 +2,8 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "GitHub.copilot",
-        "ms-vscode.live-server",
+        "github.copilot",
+        "ritwickdey.LiveServer",
         "esbenp.prettier-vscode"
       ],
       "settings": {

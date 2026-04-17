@@ -3,52 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>L'Oréal Beauty Advisor</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css"/>
+  <title>L'Oréal AI Beauty Assistant</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div class="page-wrapper">
 
-    <!-- HEADER -->
-    <header class="site-header">
-      <div class="header-inner">
-        <img src="img/loreal-logo.png" class="logo-img" />
-        <span class="tagline">Because You're Worth It</span>
-      </div>
-    </header>
+  <!-- HEADER -->
+  <div class="header">
+    <img id="logo" src="img/loreal-logo.png" alt="L'Oréal Logo" />
+    <h1>L'Oréal AI Beauty Assistant</h1>
+    <p>Build your personalized beauty routine with AI</p>
+  </div>
 
-    <!-- HERO -->
-    <section class="hero">
-      <h1>Your Personal <em>Beauty Advisor</em></h1>
-      <p>Ask anything about skincare, makeup, or haircare</p>
-    </section>
+  <hr />
 
-    <!-- CHAT -->
-    <div class="chatbox">
+  <!-- PRODUCTS -->
+  <h2>Products</h2>
+  <div id="product-grid"></div>
 
-      <div id="questionDisplay" class="question-display hidden">
-        <strong>You asked:</strong> <span id="questionText"></span>
-      </div>
+  <!-- SELECTED -->
+  <h2>Selected Products</h2>
+  <div id="selected-products"></div>
 
-      <div id="chatWindow" class="chat-window"></div>
+  <button class="main-btn" onclick="generateRoutine()">✨ Generate Routine</button>
 
-      <div class="input-row">
-        <input id="userInput" placeholder="Ask something..." />
-        <button onclick="sendMessage()">Send</button>
-      </div>
-    </div>
+  <hr />
 
-    <!-- SUGGESTIONS -->
-    <div class="chips">
-      <button onclick="askSuggestion(this)">Best moisturizer?</button>
-      <button onclick="askSuggestion(this)">Red lipstick</button>
-      <button onclick="askSuggestion(this)">Skincare routine</button>
-      <button onclick="askSuggestion(this)">Damaged hair tips</button>
-    </div>
+  <!-- CHAT -->
+  <h2>AI Chat</h2>
+  <div id="chat"></div>
 
+  <div class="chat-input">
+    <input id="user-input" type="text" placeholder="Ask about skincare..." />
+    <button onclick="sendMessage()">Send</button>
   </div>
 
   <script src="script.js"></script>

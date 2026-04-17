@@ -1,51 +1,111 @@
 const WORKER_URL = "https://lorea.gogulampativenkatatejacollege.workers.dev/";
 
-const chatWindow = document.getElementById("chatWindow");
-const userInput = document.getElementById("userInput");
-const questionDisplay = document.getElementById("questionDisplay");
-const questionText = document.getElementById("questionText");
+let products = [];
+let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || [];
+let chatHistory = [];
 
-const SYSTEM_PROMPT = `
-You are a L'Oréal Beauty Advisor.
+// LOAD PRODUCTS
+fetch("products.json")
+  .then(res => res.json())
+  .then(data => {
+    products = data.products;
+    displayProducts(products);
+    renderSelectedProducts();
+  });
 
-ONLY talk about:
-- skincare
-- makeup
-- haircare
-- beauty
+// DISPLAY PRODUCTS
+function displayProducts(list) {
+  const grid = document.getElementById("product-grid");
+  grid.innerHTML = "";
 
-If unrelated → say:
-"I'm here for beauty advice only!"
-`;
+  list.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "product-card";
 
-let history = [
-  { role: "system", content: SYSTEM_PROMPT }
-];
+    if (selectedProducts.some(sp => sp.id === p.id)) {
+      div.classList.add("selected");
+    }
 
-function addMessage(text, type) {
+    div.innerHTML = `
+      <img src="${p.image}">
+      <h4>${p.name}</h4>
+      <p>${p.brand}</p>
+      <button onclick="event.stopPropagation(); showDetails('${p.description}')">
+        Details
+      </button>
+    `;
+
+    div.onclick = () => toggleProduct(p);
+    grid.appendChild(div);
+  });
+}
+
+function showDetails(desc) {
+  alert(desc);
+}
+
+// TOGGLE
+function toggleProduct(product) {
+  const exists = selectedProducts.find(p => p.id === product.id);
+
+  if (exists) {
+    selectedProducts = selectedProducts.filter(p => p.id !== product.id);
+  } else {
+    selectedProducts.push(product);
+  }
+
+  localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+  displayProducts(products);
+  renderSelectedProducts();
+}
+
+// SELECTED UI
+function renderSelectedProducts() {
+  const container = document.getElementById("selected-products");
+  container.innerHTML = "";
+
+  selectedProducts.forEach(p => {
+    const div = document.createElement("div");
+    div.className = "selected-item";
+    div.innerHTML = `
+      ${p.name}
+      <button onclick="removeProduct(${p.id})">✕</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// REMOVE
+function removeProduct(id) {
+  selectedProducts = selectedProducts.filter(p => p.id !== id);
+  localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+  displayProducts(products);
+  renderSelectedProducts();
+}
+
+// CHAT UI
+function addMessage(role, text) {
+  const chat = document.getElementById("chat");
+
   const div = document.createElement("div");
-  div.className = "msg " + type;
+  div.className = role === "User" ? "user-msg" : "ai-msg";
   div.innerText = text;
-  chatWindow.appendChild(div);
-  chatWindow.scrollTop = chatWindow.scrollHeight;
+
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-function askSuggestion(btn) {
-  userInput.value = btn.innerText;
-  sendMessage();
-}
+// SEND MESSAGE
+async function sendMessage(customText = null) {
+  const input = document.getElementById("user-input");
 
-async function sendMessage() {
-  const text = userInput.value.trim();
+  const text = customText || input.value.trim();
   if (!text) return;
 
-  addMessage(text, "user");
-  questionDisplay.classList.remove("hidden");
-  questionText.innerText = text;
+  addMessage("User", text);
+  chatHistory.push({ role: "user", content: text });
 
-  userInput.value = "";
-
-  history.push({ role: "user", content: text });
+  input.value = "";
 
   try {
     const res = await fetch(WORKER_URL, {
@@ -53,17 +113,39 @@ async function sendMessage() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ messages: history })
+      body: JSON.stringify({
+        messages: chatHistory,
+        products: selectedProducts
+      })
     });
 
     const data = await res.json();
-    const reply = data.choices[0].message.content;
+    const reply = data.reply || "No response";
 
-    addMessage(reply, "ai");
-    history.push({ role: "assistant", content: reply });
+    addMessage("AI", reply);
+    chatHistory.push({ role: "assistant", content: reply });
 
   } catch (err) {
-    addMessage("Error connecting to AI", "ai");
-    console.error(err);
+    addMessage("AI", "Error connecting to AI");
   }
+}
+
+// GENERATE ROUTINE
+function generateRoutine() {
+  if (selectedProducts.length === 0) {
+    alert("Select products first!");
+    return;
+  }
+
+  const prompt = `
+Create a skincare routine using ONLY these products:
+${selectedProducts.map(p => `${p.name} (${p.brand})`).join(", ")}
+
+Include:
+- Morning routine
+- Night routine
+- Step-by-step order
+`;
+
+  sendMessage(prompt);
 }
